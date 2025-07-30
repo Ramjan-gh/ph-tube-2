@@ -185,7 +185,7 @@ displayDetails = (data) => {
   modal.classList.remove("hidden");
   modal.innerHTML = `
 <dialog id="my_modal_2" class="modal">
-  <div class="modal-box h-[550px] w-[450px] flex flex-col items-center">
+  <div class="modal-box h-[600px] w-[350px] flex flex-col items-center">
     <img class="w-full h-[300px] object-cover" src=${data.thumbnail} />
     <p class="py-4">${data.description}</p>
   </div>
