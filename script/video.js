@@ -24,12 +24,17 @@ const displayCategories = (categories) => {
   // console.log(categories)
   categories.forEach((element) => {
     // console.log(element);
-    const button = document.createElement("button");
-    button.classList = "btn";
-    button.innerText = element.category;
+    const buttonContainer = document.createElement("div");
+    buttonContainer.innerHTML = `
+    
+    <button class = "btn">
+      ${element.category}
+    </button>
+    
+    `
 
     //add btn to categoryContainer
-    categoryContainer.append(button);
+    categoryContainer.append(buttonContainer);
   });
 };
 
@@ -70,32 +75,98 @@ const displayVideos = (videos) => {
 
   videos.forEach((element) => {
     // console.log(element);
-      const card = document.createElement("div");
-      card.classList = "card";
-      card.innerHTML = `
-  <figure class="h-full w-full">
-    <img class= "h-full w-full object-cover"
+    const card = document.createElement("div");
+    card.classList = "card";
+    card.innerHTML = `
+  <figure class="h-full w-full relative">
+    <img class= "h-[200px] w-full object-cover"
       src= ${element.thumbnail} />
+    ${
+      element.others.posted_date.length == 0
+        ? ""
+        : `<p class="absolute right-2 bottom-2 bg-black/40 px-2 text-white text-xs">${time(element.others.posted_date)}</p>`
+    }
   </figure>
   <div class="card-body px-0 ">
     <div>
     <div class = "flex gap-2">
-        <img class="rounded-full w-8 h-8 object-cover" src=${element.authors[0].profile_picture} alt="" srcset="">
+        <img class="rounded-full w-8 h-8 object-cover" src=${
+          element.authors[0].profile_picture
+        } alt="" srcset="">
         <p class="font-bold text-lg">${element.title}</p>
     </div>
     <div class= "inline-flex items-center gap-1 pl-10">
         <p class="shrink-0">${element.authors[0].profile_name}</p>
-        ${element.authors[0].verified == true ? '<img class="w-4 h-4" src="https://img.icons8.com/?size=48&id=D9RtvkuOe31p&format=png" alt="" srcset="">' : ""}
+        ${
+          element.authors[0].verified == true
+            ? '<img class="w-4 h-4" src="https://img.icons8.com/?size=48&id=D9RtvkuOe31p&format=png" alt="" srcset="">'
+            : ""
+        }
     </div>
     <p class = "pl-10">${element.others.views} views</p>
+    <button onclick="loadDetails('${
+      element.video_id
+    }')" class="ml-10 btn btn-error">Details</button>
 </div>
   </div>
             
             `;
-      videoContainer.append(card);
-    
+    videoContainer.append(card);
   });
 };
+// {
+//     "category_id": "1003",
+//     "video_id": "aaac",
+//     "thumbnail": "https://i.ibb.co/NTncwqH/luahg-at-pain.jpg",
+//     "title": "Laugh at My Pain",
+//     "authors": [
+//         {
+//             "profile_picture": "https://i.ibb.co/XVHM7NP/kevin.jpg",
+//             "profile_name": "Kevin Hart",
+//             "verified": false
+//         }
+//     ],
+//     "others": {
+//         "views": "1.1K",
+//         "posted_date": "13885"
+//     },
+//     "description": "Comedian Kevin Hart brings his unique brand of humor to life in 'Laugh at My Pain.' With 1.1K views, this show offers a hilarious and candid look into Kevin's personal stories, struggles, and triumphs. It's a laugh-out-loud experience filled with sharp wit, clever insights, and a relatable charm that keeps audiences coming back for more."
+// }
+function loadDetails(video_id) {
+  fetch(`https://openapi.programming-hero.com/api/phero-tube/video/${video_id}`)
+    .then((res) => res.json())
+    .then((data) => displayDetails(data.video))
+    .catch((err) => console.log(err));
+}
+
+displayDetails = (data) => {
+  // console.log(data.video.video_id);
+  const modal = document.getElementById("display_description");
+  modal.classList.remove("hidden");
+  modal.innerHTML = `
+<dialog id="my_modal_2" class="modal">
+  <div class="modal-box h-[550px] w-[450px] flex flex-col items-center">
+    <img class="w-full h-[300px] object-cover" src=${data.thumbnail} />
+    <p class="py-4">${data.description}</p>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+  `;
+  const dialog = document.getElementById("my_modal_2");
+  if (dialog) dialog.showModal();
+};
+
+// date to hour
+const time = (second) =>{
+  const hour = parseInt(second/3600);
+  let remainingSeconds = second % 3600;
+  const minute = parseInt(remainingSeconds/60);
+  let seconds = remainingSeconds % 60; 
+  return `${hour} hours ${minute} minutes ${seconds} seconds ago`
+}
+
 loadCategories();
 loadVideos();
-
