@@ -19,15 +19,40 @@ const loadCategories = () => {
 // }
 
 //create displayCategories
+const removeBtnActiveStatus = () =>{
+  const buttons = document.getElementsByClassName("button-class");
+  for(let btn of buttons){
+    btn.classList.remove("bg-blue-500");
+    btn.classList.remove("text-white");
+  }
+}
+
+
+const loadCategoryVideo = (id) => {
+  // alert(id);
+  fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
+    .then((res) => res.json())
+    .then((data) => {
+      removeBtnActiveStatus();
+      const activeBtn = document.getElementById(`btn-${id}`);
+      activeBtn.classList.add("bg-blue-500");
+      activeBtn.classList.add("text-white");
+      displayVideos(data.category);
+    })
+    .catch((err) => console.log(err));
+}
+
 const displayCategories = (categories) => {
   const categoryContainer = document.getElementById("categories");
   // console.log(categories)
+  
   categories.forEach((element) => {
     // console.log(element);
     const buttonContainer = document.createElement("div");
+    buttonContainer.classList="pt-10";
     buttonContainer.innerHTML = `
     
-    <button class = "btn">
+    <button id="btn-${element.category_id}" onclick="loadCategoryVideo(${element.category_id})" class = "btn button-class">
       ${element.category}
     </button>
     
@@ -39,11 +64,11 @@ const displayCategories = (categories) => {
 };
 
 //create loadVideos
-const loadVideos = () => {
+const loadVideos = (searchText = "") => {
   // console.log('load videos created')
 
   // fetch data
-  fetch("https://openapi.programming-hero.com/api/phero-tube/videos")
+  fetch(`https://openapi.programming-hero.com/api/phero-tube/videos?title=${searchText}`)
     .then((res) => res.json())
     .then((data) => displayVideos(data.videos))
     .catch((err) => console.log(err));
@@ -72,6 +97,21 @@ const loadVideos = () => {
 const displayVideos = (videos) => {
   const videoContainer = document.getElementById("videos");
   // console.log(videos);
+  videoContainer.innerHTML =``;
+
+  if(videos.length == 0){
+    videoContainer.classList.remove("grid");
+    videoContainer.innerHTML = `
+    <div class= "w-full flex flex-col items-center gap-4">
+    <img class="w-[200px]" src="assets/icon.png" />
+    <h1 class="font-bold text-xl">No Content</h1>
+    </div>
+    `;
+  }
+  else{
+    videoContainer.classList.add("grid");
+  }
+  
 
   videos.forEach((element) => {
     // console.log(element);
@@ -167,6 +207,11 @@ const time = (second) =>{
   let seconds = remainingSeconds % 60; 
   return `${hour} hours ${minute} minutes ${seconds} seconds ago`
 }
+document.getElementById("search-input").addEventListener("keyup",(e)=>{
+  loadVideos(e.target.value);
+})
+
+document.getElementById("home-btn").addEventListener("click", () => loadVideos(""))
 
 loadCategories();
 loadVideos();

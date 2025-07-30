@@ -12,8 +12,8 @@
 <body>
     <header>
         <nav class="w-11/12 mx-auto py-2 flex justify-between items-center border-b border-black/10">
-            <div class="logo w-[100px]">
-                <img src="assets/Logo.png" alt="" srcset="">
+            <div id="home-logo" class="logo w-[100px]">
+                <button id="home-btn"><img class="cursor-pointer" src="assets/Logo.png" alt="" srcset=""></button>
             </div>
             <div class="search">
                 <label class="input">
@@ -23,7 +23,7 @@
                             <path d="m21 21-4.3-4.3"></path>
                         </g>
                     </svg>
-                    <input type="search" class="grow" placeholder="Search" />
+                    <input id="search-input" type="search" class="grow" placeholder="Search" />
                 </label>
             </div>
             <div class="sort">
