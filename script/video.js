@@ -95,6 +95,7 @@ const loadVideos = (searchText = "") => {
 
 //create displayVideos
 const displayVideos = (videos) => {
+  currentVideos = videos;
   const videoContainer = document.getElementById("videos");
   // console.log(videos);
   videoContainer.innerHTML =``;
@@ -215,3 +216,27 @@ document.getElementById("home-btn").addEventListener("click", () => loadVideos("
 
 loadCategories();
 loadVideos();
+
+
+// Sort
+let currentVideos = [];
+let isSorted = false;
+
+
+const sortVideosByViews = () => {
+  const sortedVideos = [...currentVideos].sort((a, b) => {
+    const viewsA = parseInt((a.others.views || "0").replace(/[^\d]/g, ""));
+    const viewsB = parseInt((b.others.views || "0").replace(/[^\d]/g, ""));
+    return viewsB - viewsA; // Descending
+  });
+  displayVideos(sortedVideos);
+};
+
+document.getElementById("sort-btn").addEventListener("click", () => {
+  isSorted = !isSorted;
+  if (isSorted) {
+    sortVideosByViews();
+  } else {
+    displayVideos(currentVideos);
+  }
+});
